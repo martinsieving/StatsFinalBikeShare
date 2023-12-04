@@ -40,13 +40,29 @@ glimpse(bikes_total)
 
 ```
 
-Evaluating the relationship between ridership and hour of day:
+Building linear regression model for ridership as a function of the following variables- hour, temperature, humidity, windspeed, visibility, and precipitation:
 ```{r}
 
-bikes_hour = bikes_total |> 
-  select(rented_bike_count,hour)
+regression_total = lm(data = bikes_total, rented_bike_count ~ hour + temperature_c + humidity_percent + wind_speed_m_s + visibility_10m + eql_rain_mm)
 
-# ... 
+summary(regression_total) 
+
+# This builds a regression model to predict total hourly ridership as with all variables as inputs, as opposed to drawing intependent trends for each variable.
+
+```
+
+Independent regression model for ridership vs hour of day:
+```{r}
+
+reg_hour = lm(data = bikes_total, rented_bike_count ~ hour)
+summary(reg_hour) 
+
+hour_plot = ggplot(data = bikes_total,
+                   aes(x = hour, y = rented_bike_count)) +
+                     geom_point(alpha = 0.1, color = "blue") +
+                     geom_smooth(color = "green", linewidth = 2)
+                   
+hour_plot
 
 ```
 
