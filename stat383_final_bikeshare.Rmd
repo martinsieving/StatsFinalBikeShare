@@ -3,9 +3,50 @@ title: "STAT383 Final Project: Bikeshare"
 output: html_notebook
 ---
 
-
-
+Referencing key packages:
 ```{r}
+
+library(tidyverse)
+library(janitor)
+library(here)
+library(rwunderground)
+library(openmeteo)
+library(ggplot2)
+library(geosphere)
+
+```
+
+Loading raw Seoul bikeshare date (hourly):
+```{r}
+
+thisfile=here("SeoulBikeData.csv")
+
+bikes_raw = read_csv(thisfile) %>% clean_names()
+
+```
+
+Removing outlier days (holidays and nonfunctioning), removing variables not relevant to regression, and combining precipitation variables by equivalent rain height (NSSL 1mm rain = 13mm snow) (eql_rain_mm):
+```{r}
+
+bikes_filter = bikes_raw |> 
+  filter(holiday == "No Holiday", functioning_day == "Yes") |> 
+  select(-date, -dew_point_temperature, -solar_radiation_mj_m2, -seasons, -holiday, -functioning_day)
+
+bikes_total = bikes_filter |> 
+  mutate(eql_rain_mm = rainfall_mm + snowfall_cm/10/13) |> 
+  select(-rainfall_mm, -snowfall_cm)
+
+glimpse(bikes_total)
+
+```
+
+Evaluating the relationship between ridership and hour of day:
+```{r}
+
+bikes_hour = bikes_total |> 
+  select(rented_bike_count,hour)
+
+# ... 
 
 ```
 

@@ -1752,13 +1752,95 @@ display: none;
 
 
 <!-- rnb-text-begin -->
+<p>Referencing key packages:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5saWJyYXJ5KHRpZHl2ZXJzZSlcbmxpYnJhcnkoamFuaXRvcilcbmxpYnJhcnkoaGVyZSlcbmxpYnJhcnkocnd1bmRlcmdyb3VuZClcbmxpYnJhcnkob3Blbm1ldGVvKVxubGlicmFyeShnZ3Bsb3QyKVxubGlicmFyeShnZW9zcGhlcmUpXG5cbmBgYCJ9 -->
+<pre class="r"><code>
+library(tidyverse)
+library(janitor)
+library(here)
+library(rwunderground)
+library(openmeteo)
+library(ggplot2)
+library(geosphere)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Loading raw Seoul bikeshare date (hourly):</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG50aGlzZmlsZT1oZXJlKFwiU2VvdWxCaWtlRGF0YS5jc3ZcIilcblxuYmlrZXNfcmF3ID0gcmVhZF9jc3YodGhpc2ZpbGUpICU+JSBjbGVhbl9uYW1lcygpXG5gYGAifQ== -->
+<pre class="r"><code>
+thisfile=here(&quot;SeoulBikeData.csv&quot;)
+
+bikes_raw = read_csv(thisfile) %&gt;% clean_names()</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogODc2MiBDb2x1bW5zOiAxNOKUgOKUgCBDb2x1bW4gc3BlY2lmaWNhdGlvbiDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIBcbkRlbGltaXRlcjogXCIsXCJcbmNociAgKDQpOiBEYXRlLCBTZWFzb25zLCBIb2xpZGF5LCBGdW5jdGlvbmluZyBEYXlcbmRibCAoMTApOiBSZW50ZWQgQmlrZSBDb3VudCwgSG91ciwgVGVtcGVyYXR1cmUoQyksIEh1bWlkaXR5KCUpLCAuLi5cbuKEuSBVc2UgYHNwZWMoKWAgdG8gcmV0cmlldmUgdGhlIGZ1bGwgY29sdW1uIHNwZWNpZmljYXRpb24gZm9yIHRoaXMgZGF0YS5cbuKEuSBTcGVjaWZ5IHRoZSBjb2x1bW4gdHlwZXMgb3Igc2V0IGBzaG93X2NvbF90eXBlcyA9IEZBTFNFYCB0byBxdWlldCB0aGlzIG1lc3NhZ2UuXG4ifQ== -->
+<pre><code>Rows: 8762 Columns: 14── Column specification ────────────────────────────────────────────
+Delimiter: &quot;,&quot;
+chr  (4): Date, Seasons, Holiday, Functioning Day
+dbl (10): Rented Bike Count, Hour, Temperature(C), Humidity(%), ...
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Removing outlier days (holidays and nonfunctioning), removing
+variables not relevant to regression, and combining precipitation
+variables by equivalent rain height (NSSL 1mm rain = 13mm snow)
+(eql_rain_mm):</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5iaWtlc19maWx0ZXIgPSBiaWtlc19yYXcgfD4gXG4gIGZpbHRlcihob2xpZGF5ID09IFwiTm8gSG9saWRheVwiLCBmdW5jdGlvbmluZ19kYXkgPT0gXCJZZXNcIikgfD4gXG4gIHNlbGVjdCgtZGF0ZSwgLWRld19wb2ludF90ZW1wZXJhdHVyZSwgLXNvbGFyX3JhZGlhdGlvbl9tal9tMiwgLXNlYXNvbnMsIC1ob2xpZGF5LCAtZnVuY3Rpb25pbmdfZGF5KVxuYGBgIn0= -->
+<pre class="r"><code>
+bikes_filter = bikes_raw |&gt; 
+  filter(holiday == &quot;No Holiday&quot;, functioning_day == &quot;Yes&quot;) |&gt; 
+  select(-date, -dew_point_temperature, -solar_radiation_mj_m2, -seasons, -holiday, -functioning_day)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gZXhpc3RzKGNhY2hlS2V5LCB3aGVyZSA9IC5ycy5Xb3JraW5nRGF0YUVudiwgaW5oZXJpdHMgPSBGQUxTRSkgOiBcbiAgaW52YWxpZCBmaXJzdCBhcmd1bWVudFxuRXJyb3IgaW4gYXNzaWduKGNhY2hlS2V5LCBmcmFtZSwgLnJzLkNhY2hlZERhdGFFbnYpIDogXG4gIGF0dGVtcHQgdG8gdXNlIHplcm8tbGVuZ3RoIHZhcmlhYmxlIG5hbWVcbiJ9 -->
+<pre><code>Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+Error in assign(cacheKey, frame, .rs.CachedDataEnv) : 
+  attempt to use zero-length variable name</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYmlrZXNfdG90YWwgPSBiaWtlc19maWx0ZXIgfD4gXG4gIG11dGF0ZShlcWxfcmFpbl9tbSA9IHJhaW5mYWxsX21tICsgc25vd2ZhbGxfY20vMTAvMTMpIHw+IFxuICBzZWxlY3QoLXJhaW5mYWxsX21tLCAtc25vd2ZhbGxfY20pXG5cbmdsaW1wc2UoYmlrZXNfdG90YWwpXG5gYGAifQ== -->
+<pre class="r"><code>bikes_total = bikes_filter |&gt; 
+  mutate(eql_rain_mm = rainfall_mm + snowfall_cm/10/13) |&gt; 
+  select(-rainfall_mm, -snowfall_cm)
+
+glimpse(bikes_total)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogOCwwNTdcbkNvbHVtbnM6IDdcbiQgcmVudGVkX2Jpa2VfY291bnQgPGRibD4gMzcyLCAyNDQsIDI4NSwgMjI2LCA2NTUsIDI0MCwgNzY0LCA2Mzks4oCmXG4kIGhvdXIgICAgICAgICAgICAgIDxkYmw+IDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIOKAplxuJCB0ZW1wZXJhdHVyZV9jICAgICA8ZGJsPiA2LjQsIDcuMSwgNC4yLCA0LjYsIDkuNCwgLTAuNCwgMTguMSwgMTHigKZcbiQgaHVtaWRpdHlfcGVyY2VudCAgPGRibD4gODQsIDg0LCA4OCwgODIsIDg1LCA4MywgNzcsIDc0LCA3MywgODcs4oCmXG4kIHdpbmRfc3BlZWRfbV9zICAgIDxkYmw+IDEuNCwgMi4zLCAwLjYsIDMuMCwgMC42LCAxLjIsIDAuNSwgMS42LOKAplxuJCB2aXNpYmlsaXR5XzEwbSAgICA8ZGJsPiAxNzEsIDE4NSwgMjE2LCAyNDAsIDI0MSwgMjQ3LCAyODcsIDI4NyzigKZcbiQgZXFsX3JhaW5fbW0gICAgICAgPGRibD4gMCwgMCwgMCwgMCwgMCwgMCwgMCwgMCwgMCwgMCwgMCwgMCwgMCwg4oCmXG4ifQ== -->
+<pre><code>Rows: 8,057
+Columns: 7
+$ rented_bike_count &lt;dbl&gt; 372, 244, 285, 226, 655, 240, 764, 639,…
+$ hour              &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+$ temperature_c     &lt;dbl&gt; 6.4, 7.1, 4.2, 4.6, 9.4, -0.4, 18.1, 11…
+$ humidity_percent  &lt;dbl&gt; 84, 84, 88, 82, 85, 83, 77, 74, 73, 87,…
+$ wind_speed_m_s    &lt;dbl&gt; 1.4, 2.3, 0.6, 3.0, 0.6, 1.2, 0.5, 1.6,…
+$ visibility_10m    &lt;dbl&gt; 171, 185, 216, 240, 241, 247, 287, 287,…
+$ eql_rain_mm       &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Evaluating the relationship between ridership and hour of day:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5iaWtlc19ob3VyID0gYmlrZXNfdG90YWwgfD4gXG4gIHNlbGVjdChyZW50ZWRfYmlrZV9jb3VudCxob3VyKVxuXG4jIC4uLiBcblxuYGBgIn0= -->
+<pre class="r"><code>
+bikes_hour = bikes_total |&gt; 
+  select(rented_bike_count,hour)
+
+# ... 
+</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlNUQVQzODMgRmluYWwgUHJvamVjdDogQmlrZXNoYXJlIg0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCg0KDQoNCmBgYHtyfQ0KDQpgYGANCg0K</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlNUQVQzODMgRmluYWwgUHJvamVjdDogQmlrZXNoYXJlIg0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCg0KUmVmZXJlbmNpbmcga2V5IHBhY2thZ2VzOg0KYGBge3J9DQoNCmxpYnJhcnkodGlkeXZlcnNlKQ0KbGlicmFyeShqYW5pdG9yKQ0KbGlicmFyeShoZXJlKQ0KbGlicmFyeShyd3VuZGVyZ3JvdW5kKQ0KbGlicmFyeShvcGVubWV0ZW8pDQpsaWJyYXJ5KGdncGxvdDIpDQpsaWJyYXJ5KGdlb3NwaGVyZSkNCg0KYGBgDQoNCkxvYWRpbmcgcmF3IFNlb3VsIGJpa2VzaGFyZSBkYXRlIChob3VybHkpOg0KYGBge3J9DQoNCnRoaXNmaWxlPWhlcmUoIlNlb3VsQmlrZURhdGEuY3N2IikNCg0KYmlrZXNfcmF3ID0gcmVhZF9jc3YodGhpc2ZpbGUpICU+JSBjbGVhbl9uYW1lcygpDQoNCmBgYA0KDQpSZW1vdmluZyBvdXRsaWVyIGRheXMgKGhvbGlkYXlzIGFuZCBub25mdW5jdGlvbmluZyksIHJlbW92aW5nIHZhcmlhYmxlcyBub3QgcmVsZXZhbnQgdG8gcmVncmVzc2lvbiwgYW5kIGNvbWJpbmluZyBwcmVjaXBpdGF0aW9uIHZhcmlhYmxlcyBieSBlcXVpdmFsZW50IHJhaW4gaGVpZ2h0IChOU1NMIDFtbSByYWluID0gMTNtbSBzbm93KSAoZXFsX3JhaW5fbW0pOg0KYGBge3J9DQoNCmJpa2VzX2ZpbHRlciA9IGJpa2VzX3JhdyB8PiANCiAgZmlsdGVyKGhvbGlkYXkgPT0gIk5vIEhvbGlkYXkiLCBmdW5jdGlvbmluZ19kYXkgPT0gIlllcyIpIHw+IA0KICBzZWxlY3QoLWRhdGUsIC1kZXdfcG9pbnRfdGVtcGVyYXR1cmUsIC1zb2xhcl9yYWRpYXRpb25fbWpfbTIsIC1zZWFzb25zLCAtaG9saWRheSwgLWZ1bmN0aW9uaW5nX2RheSkNCg0KYmlrZXNfdG90YWwgPSBiaWtlc19maWx0ZXIgfD4gDQogIG11dGF0ZShlcWxfcmFpbl9tbSA9IHJhaW5mYWxsX21tICsgc25vd2ZhbGxfY20vMTAvMTMpIHw+IA0KICBzZWxlY3QoLXJhaW5mYWxsX21tLCAtc25vd2ZhbGxfY20pDQoNCmdsaW1wc2UoYmlrZXNfdG90YWwpDQoNCmBgYA0KDQpFdmFsdWF0aW5nIHRoZSByZWxhdGlvbnNoaXAgYmV0d2VlbiByaWRlcnNoaXAgYW5kIGhvdXIgb2YgZGF5Og0KYGBge3J9DQoNCmJpa2VzX2hvdXIgPSBiaWtlc190b3RhbCB8PiANCiAgc2VsZWN0KHJlbnRlZF9iaWtlX2NvdW50LGhvdXIpDQoNCiMgLi4uIA0KDQpgYGANCg0K</div>
 
 
 
