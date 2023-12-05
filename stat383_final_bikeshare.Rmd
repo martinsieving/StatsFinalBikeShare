@@ -59,10 +59,132 @@ summary(reg_hour)
 
 hour_plot = ggplot(data = bikes_total,
                    aes(x = hour, y = rented_bike_count)) +
-                     geom_point(alpha = 0.1, color = "blue") +
-                     geom_smooth(color = "green", linewidth = 2)
+            geom_point(alpha = 0.1, color = "darkgrey") +
+            geom_smooth(color = "green", linewidth = 1.5) +
+            geom_abline(intercept = 277.1531,
+                        slope = 40.1596, color = "red",
+                        linetype = "dashed",linewidth=1.5) +
+            theme_minimal() +
+            labs(x = "Hour of Day",
+                 y = "Hourly Total Count of Rented Bikes",
+                 title = "Ridership vs Hour of Day")
                    
 hour_plot
 
 ```
+
+Independent regression model for ridership vs temperature:
+```{r}
+
+reg_temp = lm(data = bikes_total, rented_bike_count ~ temperature_c)
+summary(reg_temp) 
+
+temp_plot = ggplot(data = bikes_total,
+                   aes(x = temperature_c, y = rented_bike_count)) +
+            geom_point(alpha = 0.1, color = "darkgrey") +
+            geom_smooth(color = "green", linewidth = 1.5) +
+            geom_abline(intercept = 358.7187,
+                        slope = 29.435, color = "red",
+                        linetype = "dashed",linewidth=1.5) +
+            theme_minimal() +
+            labs(x = "Hourly Temperature (Deg C)",
+                 y = "Hourly Total Count of Rented Bikes",
+                 title = "Ridership vs Temperature")
+                   
+temp_plot
+
+```
+
+Independent regression model for ridership vs humidity:
+```{r}
+
+reg_hum = lm(data = bikes_total, rented_bike_count ~ humidity_percent)
+summary(reg_hum) 
+
+hum_plot = ggplot(data = bikes_total,
+                   aes(x = humidity_percent, y = rented_bike_count)) +
+            geom_point(alpha = 0.1, color = "darkgrey") +
+            geom_smooth(color = "green", linewidth = 1.5) +
+            geom_abline(intercept = 1131.6885,
+                        slope = -6.7230, color = "red",
+                        linetype = "dashed",linewidth=1.5) +
+            theme_minimal() +
+            labs(x = "Hourly Percent Humidity",
+                 y = "Hourly Total Count of Rented Bikes",
+                 title = "Ridership vs Humidity")
+                   
+hum_plot
+
+```
+
+Independent regression model for ridership vs windspeed:
+```{r}
+
+reg_wind = lm(data = bikes_total, rented_bike_count ~ wind_speed_m_s)
+summary(reg_wind) 
+
+wind_plot = ggplot(data = bikes_total,
+                   aes(x = wind_speed_m_s, y = rented_bike_count)) +
+            geom_point(alpha = 0.1, color = "darkgrey") +
+            geom_smooth(color = "green", linewidth = 1.5) +
+            geom_abline(intercept = 593.025,
+                        slope = 85.106, color = "red",
+                        linetype = "dashed",linewidth=1.5) +
+            theme_minimal() +
+            labs(x = "Hourly Wind Speed (m/s)",
+                 y = "Hourly Total Count of Rented Bikes",
+                 title = "Ridership vs Wind Speed")
+                   
+wind_plot
+
+```
+
+Independent regression model for ridership vs visibility:
+```{r}
+bikes_total_2 = bikes_total |> 
+  mutate(visibility_m = visibility_10m * 10) |> 
+  select(-visibility_10m)
+
+reg_vis = lm(data = bikes_total_2, rented_bike_count ~ visibility_m)
+summary(reg_vis) 
+
+vis_plot = ggplot(data = bikes_total_2,
+                   aes(x = visibility_m, y = rented_bike_count)) +
+            geom_point(alpha = 0.1, color = "darkgrey") +
+            geom_smooth(color = "green", linewidth = 1.5) +
+            geom_abline(intercept = 4.028e+02,
+                        slope = 2.352e-02, color = "red",
+                        linetype = "dashed",linewidth=1.5) +
+            theme_minimal() +
+            labs(x = "Visibility (meters)",
+                 y = "Hourly Total Count of Rented Bikes",
+                 title = "Ridership vs Visibility")
+                   
+vis_plot
+
+```
+
+Independent regression model for ridership vs precipitation:
+```{r}
+
+reg_prec = lm(data = bikes_total, rented_bike_count ~ eql_rain_mm)
+summary(reg_prec) 
+
+prec_plot = ggplot(data = bikes_total,
+                   aes(x = eql_rain_mm, y = rented_bike_count)) +
+            geom_point(alpha = 0.1, color = "darkgrey") +
+            geom_smooth(color = "green", linewidth = 1.5) +
+            geom_abline(intercept = 750.591,
+                        slope = -73.849, color = "red",
+                        linetype = "dashed",linewidth=1.5) +
+            theme_minimal() +
+            labs(x = "Precipitation (mm equivalent rainfall)",
+                 y = "Hourly Total Count of Rented Bikes",
+                 title = "Ridership vs Precipitation")
+                   
+prec_plot
+
+```
+
+
 
