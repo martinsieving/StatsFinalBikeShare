@@ -1,6 +1,8 @@
 ---
-title: "STAT383 Final Project: Bikeshare"
-output: html_notebook
+title: 'STAT383 Final Project: Bikeshare'
+output:
+  html_document:
+    df_print: paged
 ---
 
 Referencing key packages:
