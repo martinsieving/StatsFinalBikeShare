@@ -51,7 +51,17 @@ summary(regression_total)
 
 ```
 
-Independent regression model for ridership vs hour of day:
+Independent regression model for ridership vs hour of day--
+
+Key output values: 
+ - Coefficient/slope: 40.1596
+ - Intercept: 277.1531
+ - Std Error of Slope: 0.9353
+ - t Value: 42.94
+ - Adj R Squared: 0.1862
+ - p Value (F statistic): < 2.2e-16
+ - Res Std Err: 581 on 8055 deg of freedom
+ 
 ```{r}
 
 reg_hour = lm(data = bikes_total, rented_bike_count ~ hour)
@@ -74,7 +84,17 @@ hour_plot
 
 ```
 
-Independent regression model for ridership vs temperature:
+Independent regression model for ridership vs temperature--
+
+Key output values: 
+ - Coefficient/slope: 29.4352
+ - Intercept: 358.7187
+ - Std Error of Slope: 0.4927
+ - t Value: 59.74
+ - Adj R Squared: 0.307
+ - p Value (F statistic): < 2.2e-16
+ - Res Std Err: 536.1 on 8055 deg of freedom
+ 
 ```{r}
 
 reg_temp = lm(data = bikes_total, rented_bike_count ~ temperature_c)
@@ -97,7 +117,17 @@ temp_plot
 
 ```
 
-Independent regression model for ridership vs humidity:
+Independent regression model for ridership vs humidity--
+
+Key output values: 
+ - Coefficient/slope: -6.7230
+ - Intercept: 1131.6885
+ - Std Error of Slope: 0.3435
+ - t Value: -19.57
+ - Adj R Squared: 0.04527
+ - p Value (F statistic): < 2.2e-16
+ - Res Std Err: 629.3 on 8055 deg of freedom
+ 
 ```{r}
 
 reg_hum = lm(data = bikes_total, rented_bike_count ~ humidity_percent)
@@ -120,7 +150,17 @@ hum_plot
 
 ```
 
-Independent regression model for ridership vs windspeed:
+Independent regression model for ridership vs windspeed-- 
+
+Key output values: 
+ - Coefficient/slope: 85.106
+ - Intercept: 593.025
+ - Std Error of Slope: 6.926
+ - t Value: 12.29
+ - Adj R Squared: 0.01828
+ - p Value (F statistic): < 2.2e-16
+ - Res Std Err: 638.1 on 8055 deg of freedom
+ 
 ```{r}
 
 reg_wind = lm(data = bikes_total, rented_bike_count ~ wind_speed_m_s)
@@ -144,7 +184,17 @@ wind_plot
 
 ```
 
-Independent regression model for ridership vs visibility:
+Independent regression model for ridership vs visibility-- 
+
+Key output values: 
+ - Coefficient/slope: 2.352e-02
+ - Intercept: 4.028e+02
+ - Std Error of Slope: 1.153e-03
+ - t Value: 20.41
+ - Adj R Squared: 0.04904
+ - p Value (F statistic): < 2.2e-16
+ - Res Std Err: 628 on 8055 deg of freedom
+ 
 ```{r}
 bikes_total_2 = bikes_total |> 
   mutate(visibility_m = visibility_10m * 10) |> 
@@ -170,7 +220,17 @@ vis_plot
 
 ```
 
-Independent regression model for ridership vs precipitation:
+Independent regression model for ridership vs precipitation--
+
+Key output values: 
+ - Coefficient/slope: -73.849
+ - Intercept: 750.591
+ - Std Error of Slope: 6.213
+ - t Value: -11.89
+ - Adj R Squared: 0.01711
+ - p Value (F statistic): < 2.2e-16
+ - Res Std Err: 638.5 on 8055 deg of freedom
+ 
 ```{r}
 
 reg_prec = lm(data = bikes_total, rented_bike_count ~ eql_rain_mm)
