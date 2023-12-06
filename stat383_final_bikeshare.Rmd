@@ -67,7 +67,8 @@ hour_plot = ggplot(data = bikes_total,
             theme_minimal() +
             labs(x = "Hour of Day",
                  y = "Hourly Total Count of Rented Bikes",
-                 title = "Ridership vs Hour of Day")
+                 title = "Ridership vs Hour of Day") +
+  ylim(0,3000)
                    
 hour_plot
 
@@ -89,7 +90,8 @@ temp_plot = ggplot(data = bikes_total,
             theme_minimal() +
             labs(x = "Hourly Temperature (Deg C)",
                  y = "Hourly Total Count of Rented Bikes",
-                 title = "Ridership vs Temperature")
+                 title = "Ridership vs Temperature") +
+  ylim(0,3000)
                    
 temp_plot
 
@@ -111,7 +113,8 @@ hum_plot = ggplot(data = bikes_total,
             theme_minimal() +
             labs(x = "Hourly Percent Humidity",
                  y = "Hourly Total Count of Rented Bikes",
-                 title = "Ridership vs Humidity")
+                 title = "Ridership vs Humidity") +
+  ylim(0,3000)
                    
 hum_plot
 
@@ -133,7 +136,9 @@ wind_plot = ggplot(data = bikes_total,
             theme_minimal() +
             labs(x = "Hourly Wind Speed (m/s)",
                  y = "Hourly Total Count of Rented Bikes",
-                 title = "Ridership vs Wind Speed")
+                 title = "Ridership vs Wind Speed") +
+  xlim(0,5) +
+  ylim(0,3000)
                    
 wind_plot
 
@@ -158,7 +163,8 @@ vis_plot = ggplot(data = bikes_total_2,
             theme_minimal() +
             labs(x = "Visibility (meters)",
                  y = "Hourly Total Count of Rented Bikes",
-                 title = "Ridership vs Visibility")
+                 title = "Ridership vs Visibility") +
+  ylim(0,3000)
                    
 vis_plot
 
@@ -180,7 +186,9 @@ prec_plot = ggplot(data = bikes_total,
             theme_minimal() +
             labs(x = "Precipitation (mm equivalent rainfall)",
                  y = "Hourly Total Count of Rented Bikes",
-                 title = "Ridership vs Precipitation")
+                 title = "Ridership vs Precipitation") +
+  xlim(0,5) +
+  ylim(0,3000)
                    
 prec_plot
 
